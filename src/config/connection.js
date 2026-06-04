@@ -1,3 +1,4 @@
+//CONEXION CON BD (BASE DE DATOS)
 const mysql = require("mysql2"); // Driver de MySQL para Node.js
 
 /**
