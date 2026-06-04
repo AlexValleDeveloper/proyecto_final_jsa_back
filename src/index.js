@@ -2,6 +2,7 @@
 const express = require("express"); // Framework para crear el servidor
 require("dotenv").config(); // Carga las variables de entorno del .env.
 const pool = require("./config/connection"); // ← importa el pool (ajusta la ruta si difiere)
+const router = require("./routes/api.routes");
 
 // ===== CREAR Y CONFIGURAR EL SERVIDOR =====
 const app = express();
@@ -19,6 +20,7 @@ app.get("/api/test-db", async (req, res) => {
 });
 // ===== RUTAS DE LA API =====
 // Todas las rutas de la API pasan por aquí con el prefijo /api
+app.use("/api", router);
 
 // ===== INICIAR EL SERVIDOR =====
 // definir el puerto  a traves del que escucha
