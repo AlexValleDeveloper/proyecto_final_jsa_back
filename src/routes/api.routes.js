@@ -17,7 +17,7 @@ const router = require("express").Router();
 // router.use("/", require("./api_routes/item.route"));
 
 // --- Usuarios / autenticación ---
-// router.use("/", require("./api_routes/user.route"));
+router.use("/", require("./api_routes/user.route"));
 
 // --- Carrito ---
 // router.use("/", require("./api_routes/cart.route"));

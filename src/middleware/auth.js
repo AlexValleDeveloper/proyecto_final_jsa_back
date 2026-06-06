@@ -10,7 +10,7 @@ const checkToken = (req, res, next) => {
   try {
     // Comprueba que existe el header Authorization
     if (!req.headers.authorization) {
-      return res.status(403).json({ msj: "El token es obligatorio" });
+      return res.status(401).json({ msj: "El token es obligatorio" });
     }
 
     // Extrae el token del header (formato: "Bearer <token>")
@@ -19,14 +19,15 @@ const checkToken = (req, res, next) => {
     // Verifica que el token es válido
     const resultToken = verifyToken(token);
     if (!resultToken) {
-      return res.status(403).json({ msj: "El token es invalido" });
+      return res.status(401).json({ msj: "El token es invalido" });
     }
 
     // Guarda los datos del usuario en req.userLogin para usarlos en el controller
     req.userLogin = resultToken;
-    next(); // Pasa al siguiente middleware o controller
+    next(); // Pasa al siguiente middleware o al controller
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ msj: "Error en el servidor" });
   }
 };
 
@@ -37,14 +38,14 @@ const checkToken = (req, res, next) => {
  * Uso en rutas: router.get("/ruta", checkToken, checkRole("admin"), controller.funcion)
  */
 
-// const checkRole = (role) => {
-//     return (req, res, next) => {
-//         // req.userLogin lo añade checkToken con los datos del usuario
-//         if (req.userLogin.role !== role) {
-//             return res.status(403).json({ msj: "No tienes permisos" });
-//         }
-//         next();
-//     }
-// }
+const checkRole = (role) => {
+  return (req, res, next) => {
+    // req.userLogin lo añade checkToken con los datos del usuario (req.userLogin = resultToken;)
+    if (req.userLogin.role !== role) {
+      return res.status(403).json({ msj: "Estás autenticado, pero no tienes permisos" });
+    }
+    next(); // Pasa al siguiente middleware o al controller
+  };
+};
 
-module.exports = { checkToken };
+module.exports = { checkToken, checkRole };

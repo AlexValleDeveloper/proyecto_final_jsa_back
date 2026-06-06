@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken"); // Librería para crear y verificar tokens 
 
 /**
  * ¿Qué es un JWT?
- * Es un token — una cadena de texto cifrada que el servidor genera cuando el usuario hace login.
+ * Es un token — una cadena de texto firmada que el servidor genera cuando el usuario hace login.
  * El cliente lo guarda y lo envía en cada petición privada para demostrar que está autenticado.
  * Tiene 3 partes separadas por puntos: header.payload.signature
  * - header: tipo de token y algoritmo de cifrado
@@ -25,7 +25,7 @@ const createToken = (info) => {
 
 /**
  * Verifica que un token JWT es válido
- * @param {string} token - El token que envía el cliente en el header Authorization
+ * @param {string} token - El token que envía el cliente en el header: Authorization req.header.authorizathion
  * @returns {object|false} - Los datos guardados dentro del token si es válido, false si no lo es
  *
  * Un token puede ser inválido por dos razones:
