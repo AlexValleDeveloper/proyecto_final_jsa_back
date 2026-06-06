@@ -1,61 +1,71 @@
 // ===== DEPENDENCIAS =====
-// const bcrypt = require("bcrypt") // Para encriptar y comparar contraseñas
-// const userModel = require("../models/user.model") // Funciones que ejecutan los SQL
-// const { createToken } = require("../utils/jwt") // Para generar el token JWT
+const bcrypt = require("bcrypt"); // Para encriptar y comparar contraseñas
+const userModel = require("../models/user.model"); // Funciones que ejecutan los SQL
+const { createToken } = require("../utils/jwt"); // Para generar el token JWT
 
 // ===== REGISTER =====
-// Recibe name, email y password por el body
+// Recibe (email, name, birth_date, password) por el body.
 // Comprueba que el email no existe, encripta la contraseña e inserta el usuario
-// const register = async (req, res) => {
-//     try {
-//         const { name, email, password } = req.body
+const register = async (req, res) => {
+  try {
+    const { name, email, birthDate, password } = req.body;
 
-//         // Busca si el email ya existe en la BD
-//         const selectedUser = await userModel.selectByEmail(email)
-//         if (selectedUser) {
-//             return res.status(400).json({ msj: "El email ya está registrado" })
-//         }
+    // Busca si el email ya existe en la BD
+    const selectedUser = await userModel.selectByEmail(email);
+    if (selectedUser.length > 0) {
+      return res.status(409).json({ msj: "El email ya está registrado" });
+    }
 
-//         // Encripta la contraseña antes de guardarla (10 = nivel de seguridad)
-//         const passHashed = bcrypt.hashSync(password, 10)
+    // Encripta la contraseña antes de guardarla (10 = nivel de seguridad (es el estandar))
+    const passwordHashed = bcrypt.hashSync(password, 10);
 
-//         // Inserta el nuevo usuario en la BD
-//         const result = await userModel.addUser(name, passHashed, email)
-//         if (result.insertId) {
-//             return res.status(201).json({ id: result.insertId, msj: "Insertado con éxito" })
-//         }
-//     } catch (error) {
-//         return res.status(500).json(error)
-//     }
-// }
+    // Monto el objeto con los datos listos para insertar:
+    // password ya hasheada y validated a 0 (el admin lo aprobará después).
+    const userData = { name, email, birthDate, password: passwordHashed, validated: 0 };
+
+    // Inserta el nuevo usuario en la BD
+    const result = await userModel.addUser(userData);
+    if (result.insertId) {
+      return res.status(201).json({ id: result.insertId, msj: "Insertado con éxito" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msj: "Error en el servidor" });
+  }
+};
 
 // ===== LOGIN =====
 // Recibe email y password por el body
 // Comprueba que el email existe y que la contraseña es correcta
 // Si todo ok, devuelve un token JWT
-// const login = async (req, res) => {
-//     try {
-//         const { email, password } = req.body
+const login = async (req, res) => {
+  try {
+    //1.- Destructuring del body de la petición.
+    const { email, password } = req.body;
 
-//         // 1.- Busca el usuario por email en la BD
-//         const selectedUser = await userModel.selectByEmail(email)
-//         if (!selectedUser) {
-//             return res.status(400).json({ msj: "El email NO está registrado" })
-//         }
+    //2.- Busca el usuario por email en la BD
+    const selectedUser = await userModel.selectByEmail(email);
+    //3.- si no existe -> 401
+    if (selectedUser.length === 0) {
+      return res.status(401).json({ msj: "Las credenciales no son correctas" });
+    }
 
-//         // 2.- Compara la contraseña recibida con la encriptada en la BD
-//         const isSame = bcrypt.compareSync(password, selectedUser[0].pass)
-//         if (!isSame) {
-//             return res.status(400).json({ msj: "Contraseña incorrecta" })
-//         }
+    //4.- Compara la contraseña recibida con la encriptada en la BD
+    const isValid = bcrypt.compareSync(password, selectedUser[0].password);
+    //5.- Si no coincide → 401 genérico (mismo mensaje)
+    if (!isValid) {
+      return res.status(401).json({ msj: "Las credenciales no son correctas" });
+    }
 
-//         // 3.- Crea el token con los datos del usuario y lo devuelve
-//         const token = createToken(selectedUser[0])
-//         return res.status(200).json({ msj: "Login exitoso", token: token })
-//     } catch (error) {
-//         return res.status(500).json(error)
-//     }
-// }
+    //6.- Crea el token con los datos del usuario que necesitamos.
+    const token = createToken({ id: selectedUser[0].id, role: selectedUser[0].role });
+    //7.- Responder 200 con el token
+    return res.status(200).json({ msj: "Login exitoso", token: token });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ msj: "Error en el servidor" });
+  }
+};
 
 // ===== GET PROFILE =====
 // Ruta privada - solo accesible con token válido
@@ -64,4 +74,4 @@
 //     return res.status(200).json(req.userLogin)
 // }
 
-// module.exports = { register, login, getProfile }
+module.exports = { register, login };
