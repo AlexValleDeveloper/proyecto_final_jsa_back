@@ -19,7 +19,7 @@ const checkToken = (req, res, next) => {
     // Verifica que el token es válido
     const resultToken = verifyToken(token);
     if (!resultToken) {
-      return res.status(401).json({ msj: "El token es invalido" });
+      return res.status(401).json({ msj: "El token no es válido" });
     }
 
     // Guarda los datos del usuario en req.userLogin para usarlos en el controller
