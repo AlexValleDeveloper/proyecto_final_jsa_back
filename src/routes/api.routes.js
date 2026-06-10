@@ -13,7 +13,7 @@ const router = require("express").Router();
 // --- Catálogo público ---
 // router.use("/", require("./api_routes/community.route"));
 // router.use("/", require("./api_routes/category.route"));
- router.use("/", require("./api_routes/recipe.route"));
+router.use("/", require("./api_routes/recipe.route"));
 // router.use("/", require("./api_routes/item.route"));
 
 // --- Usuarios / autenticación ---
@@ -26,10 +26,9 @@ router.use("/", require("./api_routes/user.route"));
 // router.use("/", require("./api_routes/order.route"));
 
 // --- Catálogo público ---
+
+// router.use("/", require("./api_routes/recipe.routes"));
 router.use("/", require("./api_routes/community.routes"));
-// router.use("/", require("./api_routes/category.route"));
-// router.use("/", require("./api_routes/recipe.route"));
-// router.use("/", require("./api_routes/item.route"));
 router.use("/", require("./api_routes/category.routes"));
 router.use("/", require("./api_routes/items.routes"));
 module.exports = router; // Exporta el router para usarlo en index.js
