@@ -13,7 +13,7 @@ const router = require("express").Router();
 // --- Catálogo público ---
 // router.use("/", require("./api_routes/community.route"));
 // router.use("/", require("./api_routes/category.route"));
-router.use("/", require("./api_routes/recipe.route"));
+// router.use("/", require("./api_routes/recipe.route"));
 // router.use("/", require("./api_routes/item.route"));
 
 // --- Usuarios / autenticación ---
