@@ -3,11 +3,21 @@
 const pool = require("../config/connection");
 
 // Función para obtener todas las recetas.
-const getRecipes = async () => {
+const getRecipes = async (communityId) => {
 
-  const [rows] = await pool.query(
-    "SELECT id, name FROM recipe"
-  );
+  let query = "SELECT id, name FROM recipe";
+  let values = [];
+
+  // Si recibimos una comunidad,
+  // filtramos las recetas por community_id.
+  if (communityId) {
+
+    query += " WHERE community_id = ?";
+    values.push(communityId);
+
+  }
+
+  const [rows] = await pool.query(query, values);
 
   console.log("RECIPES:", rows);
 
@@ -31,12 +41,12 @@ const getRecipeById = async (id) => {
 const createRecipe = async (recipeData) => {
 
   const [result] = await pool.query(
-    `INSERT INTO recipe (community_id, name, recipe)
+    `INSERT INTO recipe (community_id, name, instructions)
      VALUES (?, ?, ?)`,
     [
       recipeData.community_id,
       recipeData.name,
-      recipeData.recipe,
+      recipeData.instructions,
     ]
   );
 
@@ -48,12 +58,12 @@ const updateRecipe = async (id, recipeData) => {
 
   const [result] = await pool.query(
     `UPDATE recipe
-     SET community_id = ?, name = ?, recipe = ?
+     SET community_id = ?, name = ?, instructions = ?
      WHERE id = ?`,
     [
       recipeData.community_id,
       recipeData.name,
-      recipeData.recipe,
+      recipeData.instructions,
       id,
     ]
   );

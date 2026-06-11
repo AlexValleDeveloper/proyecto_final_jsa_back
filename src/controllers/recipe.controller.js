@@ -9,8 +9,14 @@ const getRecipes = async (req, res) => {
 
   try {
 
-    // Llamamos al modelo para obtener todas las recetas.
-    const recipes = await recipeModel.getRecipes();
+    // Obtenemos el filtro de comunidad desde la query string.
+    // Ejemplo:
+    // /recipes?community=1
+    const { community } = req.query;
+
+    // Llamamos al modelo para obtener todas las recetas
+    // o únicamente las de una comunidad concreta.
+    const recipes = await recipeModel.getRecipes(community);
 
     // Respondemos con código 200 (OK)
     // y enviamos las recetas en formato JSON.
@@ -71,14 +77,14 @@ const createRecipe = async (req, res) => {
     const {
       community_id,
       name,
-      recipe,
+      instructions,
     } = req.body;
 
     // Llamamos al modelo para insertar la receta.
     const recipeId = await recipeModel.createRecipe({
       community_id,
       name,
-      recipe,
+      instructions,
     });
 
     // Devolvemos código 201 (Creado).
@@ -112,14 +118,14 @@ const updateRecipe = async (req, res) => {
     const {
       community_id,
       name,
-      recipe,
+      instructions,
     } = req.body;
 
     // Llamamos al modelo para actualizar la receta.
     const updated = await recipeModel.updateRecipe(id, {
       community_id,
       name,
-      recipe,
+      instructions,
     });
 
     // Si no existe la receta.
