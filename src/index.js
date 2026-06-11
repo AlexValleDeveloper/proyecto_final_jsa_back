@@ -7,8 +7,12 @@ const router = require("./routes/api.routes"); // Enrutador principal. Conexión
 
 // ===== CREAR Y CONFIGURAR EL SERVIDOR =====
 const app = express();
+
 app.use(cors());
-app.use(express.json()); // Middleware para parsear el body de las peticiones en JSON
+
+// Middleware para parsear el body de las peticiones en JSON
+// IMPORTANTE: debe ir ANTES de las rutas
+app.use(express.json());
 
 // ===== RUTAS DE PRUEBA =====
 // == Endpoint para verificar que el servidor funciona correctamente ==
@@ -16,6 +20,7 @@ app.use(express.json()); // Middleware para parsear el body de las peticiones en
 // app.get("/api/datos", (req, res) => {
 //   res.json({ mensaje: "Todo Ok!!" });
 // });
+
 // == Prueba de conexion con la base de datos ==
 // Verifica que el pool de MySQL responde correctamente
 // Puedes eliminarlo cuando el proyecto esté en producción
@@ -30,10 +35,11 @@ app.use(express.json()); // Middleware para parsear el body de las peticiones en
 app.use("/api", router);
 
 // ===== INICIAR EL SERVIDOR =====
-// definir el puerto  a traves del que escucha
+// definir el puerto a traves del que escucha
 // process.env.PORT lee el puerto de .env
 // El console.log es tu confirmación de que todo arrancó bien.
 const PORT = process.env.PORT;
+
 app.listen(PORT, () => {
   console.log(`server listen http://localhost:${PORT}`);
 });
