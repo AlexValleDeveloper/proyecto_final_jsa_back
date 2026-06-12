@@ -30,9 +30,24 @@ const addItem = async (cartId, itemId, quantity) => {
 };
 
 // ===== UPDATE ITEM QUANTITY =====
+const updateItem = async (cartId, itemId, quantity) => {
+  const update = "UPDATE cart_item SET quantity = ? WHERE cart_id = ? AND item_id = ?";
+  const [result] = await pool.query(update, [quantity, cartId, itemId]);
+  return result;
+};
 
 // ===== DELETE ITEM =====
+const deleteItem = async (cartId, itemId) => {
+  const remove = "DELETE FROM cart_item WHERE cart_id = ? AND item_id = ?";
+  const [result] = await pool.query(remove, [cartId, itemId]);
+  return result;
+};
 
 // ===== DELETE CART =====
+const deleteCart = async (cartId) => {
+  const remove = "DELETE FROM cart_item WHERE cart_id = ?";
+  const [result] = await pool.query(remove, [cartId]);
+  return result;
+};
 
-module.exports = { selectCarByUser, selectCartByUserId, addItem };
+module.exports = { selectCarByUser, selectCartByUserId, addItem, updateItem, deleteItem, deleteCart };
