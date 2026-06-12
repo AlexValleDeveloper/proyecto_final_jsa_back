@@ -16,6 +16,7 @@ const selectByEmail = async (email) => {
 // Inserta un nuevo usuario en la BD.
 // Devuelve el resultado de la query (result.insertId para obtener el id generado que será importante después en el controller.)
 const addUser = async (userData) => {
+  //Inserto usuario en la BD.
   const insert = "INSERT INTO user (email, name, birth_date, password, validated) VALUES (?,?,?,?,?)";
   const [result] = await pool.query(insert, [
     userData.email,
@@ -24,6 +25,8 @@ const addUser = async (userData) => {
     userData.password,
     userData.validated,
   ]);
+  //Inserto un carrito por defecto con el id del usuario recién creado.
+  await pool.query("INSERT INTO cart (user_id) VALUES (?)", [result.insertId]);
   return result;
 };
 

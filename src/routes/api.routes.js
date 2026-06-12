@@ -20,7 +20,7 @@ router.use("/", require("./api_routes/items.routes"));
 router.use("/", require("./api_routes/user.route"));
 
 // --- Carrito ---
-// router.use("/", require("./api_routes/cart.route"));
+router.use("/", require("./api_routes/cart.route"));
 
 // --- Pedidos ---
 // router.use("/", require("./api_routes/order.route"));
