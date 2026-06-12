@@ -11,11 +11,11 @@ const { checkToken, checkRole } = require("../../middleware/auth");
 // Importamos las funciones del controller
 // Estas funciones son las que se ejecutarán cuando alguien llame a nuestras rutas
 const {
-  getRecipes,
-  getRecipeById,
-  createRecipe,
-  updateRecipe,
-  deleteRecipe,
+getRecipes,
+getRecipeById,
+createRecipe,
+updateRecipe,
+deleteRecipe,
 } = require("../../controllers/recipe.controller");
 
 // GET /recipes
@@ -27,10 +27,10 @@ router.get("/recipes", getRecipes);
 // Crea una nueva receta
 // Solo usuarios con rol admin
 router.post(
-  "/admin/recipes",
-  checkToken,
-  checkRole("admin"),
-  createRecipe
+"/admin/recipes",
+checkToken,
+checkRole("admin"),
+createRecipe
 );
 
 // PUT /admin/recipes/:id
@@ -46,10 +46,29 @@ router.post(
 //
 // Solo usuarios con rol admin
 router.put(
-  "/admin/recipes/:id",
-  checkToken,
-  checkRole("admin"),
-  updateRecipe
+"/admin/recipes/:id",
+checkToken,
+checkRole("admin"),
+updateRecipe
+);
+
+// PATCH /admin/recipes/:id
+// Actualiza parcialmente una receta existente
+//
+// Ejemplos:
+// /admin/recipes/1
+// /admin/recipes/5
+// /admin/recipes/20
+//
+// El id llegará al controller mediante:
+// req.params.id
+//
+// Solo usuarios con rol admin
+router.patch(
+"/admin/recipes/:id",
+checkToken,
+checkRole("admin"),
+updateRecipe
 );
 
 // DELETE /admin/recipes/:id
@@ -65,10 +84,10 @@ router.put(
 //
 // Solo usuarios con rol admin
 router.delete(
-  "/admin/recipes/:id",
-  checkToken,
-  checkRole("admin"),
-  deleteRecipe
+"/admin/recipes/:id",
+checkToken,
+checkRole("admin"),
+deleteRecipe
 );
 
 // GET /recipes/:id
