@@ -129,6 +129,12 @@ const createOrder = async (req, res) => {
 
         const result = await OrdersModel.createOrder(userId);
 
+        if (result.length === 0) {
+            return res.status(400).json({
+                message: "El carrito está vacío"
+            });
+        }
+
         res.status(201).json(result);
 
     } catch (error) {
