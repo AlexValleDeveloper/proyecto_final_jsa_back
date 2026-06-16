@@ -120,13 +120,18 @@ const deactivateMe = async (req, res) => {
   try {
     // 1. Saco el id del token para pasarselo como argumento a la función del model.
     const id = req.userLogin.id;
-    // 2. LLamo al model y le doy el id
+    // 2. Compruebo si tiene pedidos activos
+    const activeOrders = await userModel.hasActiveOrders(id);
+    if (activeOrders.length > 0) {
+      return res.status(409).json({ msj: "No puedes darte de baja con pedidos en curso" });
+    }
+    // 3. LLamo al model y le doy el id
     const selectedUser = await userModel.deactivateUser(id);
-    // 3. Si no encontró al usuario (affectedRows = 0) -> 404
+    // 4. Si no encontró al usuario (affectedRows = 0) -> 404
     if (selectedUser.affectedRows === 0) {
       return res.status(404).json({ msj: "No se ha podido encontrar al usuario" });
     }
-    // 4. Responder 200
+    // 5. Responder 200
     return res.status(200).json({ msj: "Su perfil ha sido eliminado" });
   } catch (error) {
     console.error(error);
