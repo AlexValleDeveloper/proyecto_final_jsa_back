@@ -20,9 +20,9 @@ router.use("/", require("./api_routes/items.routes"));
 router.use("/", require("./api_routes/user.route"));
 
 // --- Carrito ---
-// router.use("/", require("./api_routes/cart.route"));
+router.use("/", require("./api_routes/cart.route"));
 
-// --- Pedidos ---
-// router.use("/", require("./api_routes/order.route"));
+// --- Orders ---
+router.use("/", require("./api_routes/orders.routes"));
 
 module.exports = router; // Exporta el router para usarlo en index.js
