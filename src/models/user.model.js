@@ -95,4 +95,19 @@ const validateUser = async (id) => {
   return result;
 };
 
-module.exports = { addUser, selectByEmail, selectById, updateMe, deactivateUser, getUsers, validateUser };
+const hasActiveOrders = async (id) => {
+  const select = "SELECT id FROM orders WHERE user_id = ? AND status IN ('pending', 'processing')";
+  const [result] = await pool.query(select, [id]);
+  return result;
+};
+
+module.exports = {
+  addUser,
+  selectByEmail,
+  selectById,
+  updateMe,
+  deactivateUser,
+  getUsers,
+  validateUser,
+  hasActiveOrders,
+};
