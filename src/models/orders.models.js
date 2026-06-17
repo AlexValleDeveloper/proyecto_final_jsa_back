@@ -61,24 +61,62 @@ const createOrder = async (userId) => {
             [userId]
         );
 
+        // Carrito vacío
         if (cartItems.length === 0) {
             const error = new Error("El carrito está vacío");
             error.status = 400;
             throw error;
         }
 
+        // Usuario validado + datos obligatorios
+        const [userRows] = await db.query(
+            `SELECT validated, address, phone
+             FROM user
+             WHERE id = ? AND active = 1`,
+            [userId]
+        );
+
+        if (userRows.length === 0) {
+            const error = new Error("Usuario no encontrado o inactivo");
+            error.status = 404;
+            throw error;
+        }
+
+        const user = userRows[0];
+
+        if (user.validated === 0) {
+            const error = new Error(
+                "Debes estar validado por el administrador para confirmar un pedido"
+            );
+            error.status = 403;
+            throw error;
+        }
+
+        if (!user.address || !user.phone) {
+            const error = new Error(
+                "Debes completar dirección y teléfono antes de confirmar un pedido"
+            );
+            error.status = 400;
+            throw error;
+        }
+
+        // Comprobar stock
         for (const item of cartItems) {
             if (item.quantity > item.stock) {
-                const error = new Error(`Stock insuficiente para ${item.name}`);
+                const error = new Error(
+                    `Stock insuficiente para ${item.name}`
+                );
                 error.status = 409;
                 throw error;
             }
         }
 
+        // Calcular total
         const total = cartItems.reduce((acc, item) => {
             return acc + parseFloat(item.price) * item.quantity;
         }, 0);
 
+        // Crear pedido
         const [orderResult] = await db.query(
             `INSERT INTO orders (user_id, total, status)
              VALUES (?, ?, 'pending')`,
@@ -87,6 +125,7 @@ const createOrder = async (userId) => {
 
         const orderId = orderResult.insertId;
 
+        // Insertar líneas y descontar stock
         for (const item of cartItems) {
             await db.query(
                 `INSERT INTO orders_item
@@ -103,6 +142,7 @@ const createOrder = async (userId) => {
             );
         }
 
+        // Vaciar carrito
         await db.query(
             `DELETE FROM cart_item
              WHERE cart_id = ?`,
