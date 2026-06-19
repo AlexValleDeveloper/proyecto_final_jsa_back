@@ -2,7 +2,7 @@
 const express = require("express"); // Framework para crear el servidor
 const cors = require("cors"); // Permite peticiones desde el frontend (Angular)
 require("dotenv").config(); // Carga las variables de entorno del .env.
-//const pool = require("./config/connection"); // ← importa el pool (ajusta la ruta si difiere) PRUEBAS
+const pool = require("./config/connection"); // ← importa el pool (ajusta la ruta si difiere) PRUEBAS
 const router = require("./routes/api.routes"); // Enrutador principal. Conexión con las rutas.
 
 // ===== CREAR Y CONFIGURAR EL SERVIDOR =====
